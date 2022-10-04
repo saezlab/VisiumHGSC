@@ -67,7 +67,7 @@ rule seurat_to_folder:
     output:
         h5ad = temp(directory('results/convert/{split_type}'))
     conda:
-        "../envs/preprocessingR.yml"
+        "../envs/preprocessingR.yaml"
     script:
         "../scripts/preprocessing/RDS_to_h5ad.R"
 
@@ -77,6 +77,6 @@ rule make_anndata:
     output:
         ad = 'results/integrated/{split_type}.h5ad'
     conda:
-        "../envs/preprocessingR.yml"
+        "../envs/preprocessingR.yaml"
     script:
         "../scripts/preprocessing/ST_to_adata.py"
