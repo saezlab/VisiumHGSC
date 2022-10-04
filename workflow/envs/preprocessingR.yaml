@@ -10,7 +10,7 @@ dependencies:
   - r-seurat
   - numpy
   - pandas
-  - r-leidenalg
+  - r-leiden
   - leidenalg
   - bioconductor-singlecellexperiment 
   - bioconductor-zellkonverter
