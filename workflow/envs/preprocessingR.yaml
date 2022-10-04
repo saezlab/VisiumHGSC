@@ -8,6 +8,7 @@ dependencies:
   - r-devtools
   - r-tidyverse
   - r-seurat
+  - numpy
   - r-leidenalg
   - leidenalg
   - bioconductor-singlecellexperiment 
