@@ -1,5 +1,5 @@
 {
-    "SBATCH_DEFAULTS": "job-name=smk-{rule}-{wildcards} output=logs/slurm/{rule}/{rule}-{wildcards}-%j.out",
+    "SBATCH_DEFAULTS": "job-name=smk-{rule}-{wildcards} output=logs/slurm/{rule}/{rule}-{wildcards}-%j.out error=logs/slurm/{rule}/{rule}-{wildcards}-%j.err",
     "CLUSTER_NAME": "",
     "CLUSTER_CONFIG": "",
     "ADVANCED_ARGUMENT_CONVERSION": "no"
