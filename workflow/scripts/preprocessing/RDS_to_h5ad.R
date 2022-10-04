@@ -3,7 +3,7 @@ library(SingleCellExperiment)
 library(zellkonverter)
 
 if(exists("snakemake")){
-  input_fp = normalizePath(snakemake@input$data)
+  input_fp = normalizePath(snakemake@input$integrated)
   output_fp <- snakemake@output[[1]]
 }else{
   input_fp = normalizePath("results/integrated/plate_int.RDS")
