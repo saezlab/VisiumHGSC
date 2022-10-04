@@ -9,6 +9,7 @@ dependencies:
   - r-tidyverse
   - r-seurat
   - numpy
+  - pandas
   - r-leidenalg
   - leidenalg
   - bioconductor-singlecellexperiment 
