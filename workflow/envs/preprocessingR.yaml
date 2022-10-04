@@ -8,10 +8,6 @@ dependencies:
   - r-devtools
   - r-tidyverse
   - r-seurat
-  - numpy
-  - pandas
-  - r-leiden
-  - leidenalg
   - bioconductor-singlecellexperiment 
   - bioconductor-zellkonverter
   - r-seuratobject
@@ -19,4 +15,7 @@ dependencies:
   - bioconductor-genomeinfodb
   - bioconductor-genomeinfodbdata
   - r-harmony
+  - pip
+  - pip:
+    - leidenalg
   # - r-signac
