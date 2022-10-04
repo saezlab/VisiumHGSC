@@ -41,6 +41,8 @@ rule integrate_seurat:
         "logs/integrated/{split_type}_int.log"
     conda:
         '../envs/preprocessingR.yaml'
+    resources:
+        disk_mb=20000
     script:
         "../scripts/preprocessing/integrate_seurat.R"
 
