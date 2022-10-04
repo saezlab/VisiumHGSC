@@ -8,7 +8,7 @@ dependencies:
   - r-devtools
   - r-tidyverse
   - r-seurat
-  - r-leiden
+  - r-leidenalg
   - bioconductor-singlecellexperiment 
   - bioconductor-zellkonverter
   - r-seuratobject
