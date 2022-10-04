@@ -80,6 +80,6 @@ rule make_anndata:
     output:
         ad = 'results/integrated/{split_type}.h5ad'
     conda:
-        "../envs/preprocessingR.yaml"
+        "../envs/scanpy.yaml"
     script:
         "../scripts/preprocessing/ST_to_adata.py"
