@@ -44,7 +44,7 @@ data <- RunHarmony(data, c("patient", "plate"), assay.use = "SCT", reduction.sav
 data <- FindNeighbors(data, reduction = "harmony")
 print('Neighbors added')
 
-data <- FindClusters(data, algorithm = 4)
+data <- FindClusters(data, algorithm = 1)
 print('Clusters added')
 
 data <- RunUMAP(data, reduction = "harmony", dims = 1:30)
