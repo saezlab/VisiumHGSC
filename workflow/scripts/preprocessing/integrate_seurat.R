@@ -42,13 +42,17 @@ data <- RunPCA(data, assay = "SCT", features = features)
 data <- RunHarmony(data, c("patient", "plate"), assay.use = "SCT", reduction.save = "harmony", max.iter.harmony = 20)
 
 data <- FindNeighbors(data, reduction = "harmony")
+print('Neighbors added')
 data <- FindClusters(data, algorithm = 4)
+print('Clusters added')
 
 data <- RunUMAP(data, reduction = "harmony", dims = 1:30)
+print('Umaps added')
 
 if(exists("snakemake")){
   raw <- readRDS(raw_fp)
   data@images <- raw@images
+  print('Images added')
   
   saveRDS(data, file = output_fp)
   
