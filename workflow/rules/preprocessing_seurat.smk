@@ -42,7 +42,8 @@ rule integrate_seurat:
     conda:
         '../envs/preprocessingR.yaml'
     resources:
-        disk_mb=20000
+        disk_mb=20000,
+        mem_mb=20000
     script:
         "../scripts/preprocessing/integrate_seurat.R"
 
