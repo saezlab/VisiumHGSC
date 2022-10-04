@@ -73,7 +73,7 @@ rule seurat_to_folder:
 
 rule make_anndata:
     input:
-        rules.seurat_to_folder.output
+        rules.seurat_to_folder.output[0]
     output:
         ad = 'results/integrated/{split_type}.h5ad'
     conda:
