@@ -13,6 +13,9 @@ use-conda: "True"
 use-singularity: "False"
 jobs: "10"
 printshellcmds: "True"
+default-resources:
+    - runtime=14400
+    - mem_mb=16000
 
 # Example resource configuration
 # default-resources:
