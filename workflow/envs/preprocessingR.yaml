@@ -18,4 +18,6 @@ dependencies:
   - pip
   - pip:
     - leidenalg
+    - numpy
+    - pandas
   # - r-signac
