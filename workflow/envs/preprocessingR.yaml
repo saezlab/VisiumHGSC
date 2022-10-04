@@ -9,6 +9,7 @@ dependencies:
   - r-tidyverse
   - r-seurat
   - r-leidenalg
+  - leidenalg
   - bioconductor-singlecellexperiment 
   - bioconductor-zellkonverter
   - r-seuratobject
