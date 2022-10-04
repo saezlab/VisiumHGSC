@@ -42,7 +42,7 @@ rule integrate_seurat:
     conda:
         '../envs/preprocessingR.yaml'
     resources:
-        mem = '10G'
+        mem_mb = 10000
     script:
         "../scripts/preprocessing/integrate_seurat.R"
 
