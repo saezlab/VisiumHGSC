@@ -42,6 +42,8 @@ for cell_type in cell_types:
     print('cell type: ', cell_type, ' done')
 net = pd.concat(net, ignore_index=True)
 
+print(net.head())
+
 #remove mitochondrial genes
 not_mito = [not gene.startswith('MT-') for gene in net['target']]
 net = net[not_mito]
