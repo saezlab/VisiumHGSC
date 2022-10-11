@@ -40,7 +40,7 @@ for cell_type in cell_types:
     sign = sign[keep]
     net.append(sign)
     print('cell type: ', cell_type, ' done')
-net = pd.concat(net, ignore_index=True)
+net = pd.concat(net, ignore_index=True).drop(['target'], axis = 1).rename({'name':'target'}, axis = 1)
 
 print(net.head())
 
