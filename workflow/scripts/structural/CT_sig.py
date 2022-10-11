@@ -5,9 +5,7 @@ import decoupler as dc
 
 # %%
 adata = sc.read_h5ad(snakemake.input[0])
-print(adata)
-print(adata.var)
-adata.var_names = adata.var.features
+# adata.var_names = adata.var.features
 
 # sc.pp.normalize_total(adata, target_sum=1e4)
 # sc.pp.log1p(adata)
