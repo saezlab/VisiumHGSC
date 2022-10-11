@@ -1,1 +1,6 @@
 seed: 42
+
+functional:
+  normalisation: 'log1p'
+  top_targets: 300
+  method: 'mlm'

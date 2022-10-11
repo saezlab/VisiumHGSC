@@ -11,8 +11,8 @@ if 'snakemake' in locals():
     output_fp = snakemake.output[0]
     normalisation = snakemake.params[0]
     top_genes = int(snakemake.params[1])
-    TF_conf = snakemake.params[2]
-    method = snakemake.params[3]
+    method = snakemake.params[2]
+    # TF_conf = snakemake.params[3]
 else:
     tissue = 'brain'
     network = 'TFs'
@@ -20,14 +20,15 @@ else:
     output_fp = 'test.csv'
     normalisation = 'log1p'
     top_genes = int('300')
-    TF_conf = 'ABC'
     method = 'mlm'
+    TF_conf = 'ABC'
 
 
 # %%
 adata = sc.read_h5ad(adata_fp)
 
 # %%
+##TODO: change this!!!!!!!!!!!
 if normalisation == 'log1p':
     sc.pp.normalize_total(adata, inplace=True)
     sc.pp.log1p(adata)

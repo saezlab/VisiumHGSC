@@ -10,6 +10,7 @@ rule all:
     #    expand('results/sc-data/ref_markers_{CT}.csv', CT = ['cell_type', "cell_subtype"]),
     #    expand('results/integrated/plate_scores_{CT}.csv', CT = ['cell_type', "cell_subtype"]),
     #    'plots/CTprop/cell2location_umap.pdf'
+    'plots/structural/plate/cell2location_umap.pdf'
 
 
 module preprocess:
@@ -31,14 +32,7 @@ module structural:
 use rule * from structural as St_*
 
 
-rule merge_adata:
-    input:
-        adata_w_c2l = 'data/sp.h5ad',
-        integrated = "data/integrated/plate_int.h5ad"
-    output:
-        merged = 'data/merged.h5ad'
-    script:
-        '../scripts/structural/merge_adata.py'
+
 
 rule cell_prop:
     input:
