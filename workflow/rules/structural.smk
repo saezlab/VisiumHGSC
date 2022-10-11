@@ -24,7 +24,7 @@ rule cell_prop:
     conda:
         "../envs/scanpy.yaml"
     script:
-        '../scripts/structural/umaps_structural.py'
+        '../scripts/structural/umaps_CTprop.py'
 
 ############################
 #   Use prior atlas to get cell type markers using decoupler
