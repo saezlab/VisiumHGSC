@@ -5,8 +5,8 @@ configfile: "config/config.yaml"
 
 rule all:
     input:
-       expand("results/integrated/{split_type}_int.RDS", split_type = ['plate', 'raw']),
-       expand("plots/integration/{split_type}_umaps.pdf", split_type = ['plate', 'raw']),
+       expand("results/integrated/{split_type}_int.RDS", split_type = ['plate']),
+       expand("plots/integration/{split_type}_umaps.pdf", split_type = ['plate']),
        'plots/structural/plate/cell2location_umap.pdf',
        expand('results/functional/plate/activities_{network}.csv', network = ['pathways', 'cytokines']),
        expand('plots/functional/plate/spatial_activities_{network}.pdf', network = ['pathways', 'cytokines']),
