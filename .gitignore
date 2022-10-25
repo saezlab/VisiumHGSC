@@ -163,6 +163,7 @@ cython_debug/
 #Data and results
 data/
 results/
+logs/
 plots/
 archive_merged_samples.zip
 00_Admin/
