@@ -10,7 +10,7 @@ if 'snakemake' in locals():
     adata_s_fp = snakemake.input[1]
 else:
     adata_fp = '../../../data/sp.h5ad'
-    adata_s_fp = '../../../data/integrated/plate_int.h5ad'
+    adata_s_fp = '../../../results/integrated/plate.h5ad'
 
 
 # %%

@@ -25,6 +25,8 @@ sct = sct[spatial.obs.index, sct.var.index.sort_values()]
 # copy counts from spatial assay to raw
 sct.raw = spatial[sct.obs.index].copy()
 
+sct.layers['counts'] = spatial[sct.obs.index, sct.var.index].X.copy()
+
 #change keys to lower case
 for obsm in list(sct.obsm.keys()):
     sct.obsm['X_' + obsm.lower()] = sct.obsm[obsm].copy()

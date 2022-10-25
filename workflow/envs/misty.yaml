@@ -1,0 +1,15 @@
+name: misty
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - r-base>=4.1
+  - r-devtools
+  - r-tidyverse
+  - r-purrr
+  - r-distances
+  - r-rcpp
+  - r-rlist
+  - r-ranger
+  - r-factoextra

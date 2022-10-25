@@ -1,6 +1,34 @@
 seed: 42
+organism: 'human'
+samples: ['HC-S_OVA38', 'BG-L_OVA15-16', 'HC-L_OVA15-16', 'marker_OVA38', 'BG-S_OVA28', 'HC-S_OVA28', 'HC-S_OVA10', 'BG-S_OVA10', 'BG-S_OVA37', 'HC-S_OVA12', 'BG-L_OVA23', 'BG-S_OVA41', 'HC-S_OVA41', 'marker_OVA23', 'BG-S_OVA12', 'HC-S_OVA37', 'HC-L_OVA23', 'HC-S_OVA6', 'HC-L_OVA22', 'BG-L_OVA22', 'BG-S_OVA9', 'BG-L_OVA20', 'BG-S_OVA6', 'HC-L_OVA20', 'HC-S_OVA9', 'marker_OVA22', 'BG-L_OVA33', 'BG-L_OVA29', 'marker_OVA6', 'BG-L_OVA46', 'BG-L_OVA26', 'HC-L_OVA29', 'HC-L_OVA33', 'HC-L_OVA46', 'HC-L_OVA26']
 
 functional:
-  normalisation: 'log1p'
-  top_targets: 300
-  method: 'mlm'
+  TFs:
+    normalisation: 'log1p'
+    method: 'mlm'
+    levels: 'ABC'
+    plot_top: 10
+
+  pathways:
+    normalisation: 'log1p'
+    method: 'mlm'
+    top_targets: 300
+
+  cytokines:
+    normalisation: 'log1p'
+    method: 'mlm'
+    top_targets: 300
+    plot_top: 10
+
+
+misty:
+    random_seed: 42
+    functional:
+        bypass_intra: True
+        plots: {'trim': 2, 'cutoff': 1.5}
+    pathwaysCT:
+        bypass_intra: True
+        plots: {'trim': 1, 'cutoff': 1}
+    celltype:
+        bypass_intra: False
+        plots: {'trim': 1, 'cutoff': 1}
