@@ -38,4 +38,4 @@ module misty:
     snakefile: 'rules/misty.smk'
     config: config
 
-use rule * from structural as M_*
+use rule * from misty as M_*
