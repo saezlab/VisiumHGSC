@@ -3,9 +3,13 @@ library(mistyR)
 library(future)
 
 # data manipulation
-library(tidyverse)
+library(dplyr)
+library(tibble)
 library(purrr)
 library(distances)
+
+
+# input and outputs -------------------------------------------------------
 
 if(exists("snakemake")){
   
@@ -25,20 +29,19 @@ if(exists("snakemake")){
     stop('The input has to contain either 2 or 3 files, corresponding (in order) to coordinates, and then either intra+para data (in 1 file), or intra and paraview (2 files). ', length(datas_fp), ' files were given:\n', paste(datas_fp, collapse = ' '))
   }
   
-  sample <- basename(dirname(snakemake@output[[1]]))
-  
   output_fp <- snakemake@output[[1]]
   
+  sample <- gsub('_view.rds', '', output_fp %>% basename())
+  
+  
 }else{
-  tissue <- 'brain'
   
-  coord_fp <- normalizePath(paste('results/ST/Misty/', tissue, '_coordinates.csv', sep=""))
-  celltype_fp <- normalizePath(paste('results/ST/ST_', tissue, '_deconvoluted.csv', sep=""))
-  pathways_fp <- normalizePath(paste('results/ST/functional/', tissue, '_activities_pathways.csv', sep=""))
-  tf_fp <- normalizePath(paste('results/ST/functional/', tissue, '_activities_TFs.csv', sep=""))
-  sample <- "Sample_304_C1"
+  coord_fp <- normalizePath('results/Misty/coordinates.csv')
+  celltype_fp <- normalizePath('results/Misty/cellprop.csv')
+
+  sample <- "HC-S_OVA38"
   
-  output_fp <- paste('results/ST/Misty/', tissue,'/', sample, '/celltype_view.rds', sep = '')
+  output_fp <- paste('results/Misty/celltype/views/', sample, '_view.rds', sep = '')
   
   datas_fp <- list(coord = coord_fp, cellprop = celltype_fp)
   
@@ -47,16 +50,15 @@ if(exists("snakemake")){
 
 # determine view type -----------------------------------------------------
 
-view <- gsub('_view.rds','', basename(output_fp))
+view_type <- output_fp %>% dirname() %>% dirname() %>% basename()
 
 
 
 # load data ---------------------------------------------------------------
 
 
-
 datas <- lapply(datas_fp, function(fp){
-  data <- read_csv(fp)
+  data <- read.csv(fp)
   data <- data %>% column_to_rownames(var = colnames(data)[1])
 })
 
@@ -96,7 +98,7 @@ cat('Using', as.character(2*radius), 'as l parameter in paraview creation\n')
 # make views --------------------------------------------------------------
 
 # TODO: redo this for all three views for this project
-if(view == 'functional'){
+if(view_type == 'functional'){
   intra.view <- create_initial_view(datas[[2]])
   
   para.view <- create_initial_view(datas[[3]]) %>% add_paraview(datas[[1]] %>% select(x,y), l = radius * 2)
@@ -105,7 +107,7 @@ if(view == 'functional'){
   
   misty.views <- intra.view %>% add_views(new.views = para.view)
   
-}else if (view == 'celltype'){
+}else if (view_type == 'celltype'){
   
   misty.views <- create_initial_view(datas[[2]]) %>% add_paraview(datas[[1]] %>% select(x,y), l = radius * 2)
   
@@ -115,8 +117,11 @@ para.name <- names(misty.views)[grepl('para', names(misty.views))]
 
 misty.views <- misty.views %>% rename_view(., old.name = para.name, new.name = 'paraview', new.abbrev = 'para')
 
+para <- misty.views$paraview$data
+rownames(para) <- rownames(datas[[1]])
 
 if(exists("snakemake")){
   saveRDS(misty.views, snakemake@output[[1]])
+  write.csv(para, snakemake@output[[2]])
 }
 

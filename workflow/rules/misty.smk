@@ -15,17 +15,26 @@ rule get_celltype_views:
         'results/Misty/coordinates.csv',
         'results/Misty/cellprop.csv'
     output:
-        view = 'results/Misty/models/{sample}/celltype_view.rds'
+        view = 'results/Misty/celltype/views/{sample}_view.rds',
+        paraview = 'results/Misty/celltype/views/{sample}_paraview.csv'
     conda:
         "../envs/misty.yaml"
     script:
         "../scripts/misty/make_views.R"
 
+rule get_combine_paraviews:
+    input:
+        expand('results/Misty/celltype/views/{sample}_paraview.csv', sample = config['samples'])
+    output:
+        'results/Misty/{view_type}/paraviews.csv'
+    shell:
+        "awk 'FNR==1 && NR!=1{{next;}}{{print}}' {input} >> {output}"
+
 rule run_views:
     input:
-        view = 'results/Misty/models/{sample}/{view_type}_view.rds'
+        view = 'results/Misty/{view_type}/views/{sample}_view.rds'
     output: 
-        directory('results/Misty/models/{sample}/{view_type}_misty_model')
+        directory('results/Misty/{view_type}/models/{sample}')
     params:
         seed = config['misty'].get("random_seed", 42),
         bypass_intra = lambda wildcards: config['misty'][wildcards.view_type].get('bypass_intra', False)

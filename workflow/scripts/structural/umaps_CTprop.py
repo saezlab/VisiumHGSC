@@ -28,7 +28,7 @@ prop = adata.obsm['q05_cell_abundance_w_sf']
 adata.obs[adata.uns['mod']['factor_names']] = prop.div(prop.sum(axis=1), axis = 0)
 
 # %%
-fig, axs = plt.subplots(5, 5, figsize=(23, 15))
+fig, axs = plt.subplots(4, 4, figsize=(23, 15))
 axs = axs.flatten()
 
 for ax, CT in zip(axs, sorted(adata.uns['mod']['factor_names'])):
@@ -78,7 +78,7 @@ lims = pd.DataFrame({'max':adata.obs.filter(cell_types , axis =1).max()})
 with PdfPages(spatial1_out) as output_pdf:
     for plate in plates:
 
-        fig, axs = plt.subplots(5, 5, figsize=(20, 20))
+        fig, axs = plt.subplots(4,4, figsize=(20, 20))
         axs = axs.flatten()
 
         for i, ct in enumerate(cell_types):
