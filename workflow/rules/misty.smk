@@ -43,3 +43,16 @@ rule run_views:
     threads: 6
     script:
         "../scripts/misty/run.R"
+
+rule plot_misty_results:
+    input:
+        'results/integrated/sample_metadata.csv',
+        lambda w: expand('results/Misty/{{view_type}}/models/{sample}', sample = config['samples'])
+    output: 
+        'plots/Misty/{view_type}_misty.pdf'
+    params:
+        lambda w: config['misty'][w.view_type]['plots']
+    conda:
+        "../envs/misty.yaml"
+    script:
+        "../scripts/misty/plot_model_results.R"

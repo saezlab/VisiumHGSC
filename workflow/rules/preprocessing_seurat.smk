@@ -83,3 +83,13 @@ rule make_anndata:
         "../envs/scanpy.yaml"
     script:
         "../scripts/preprocessing/ST_to_adata.py"
+
+rule extract_sample_metadata:
+    input:
+        'results/integrated/plate.h5ad'
+    output:
+        'results/integrated/sample_metadata.csv'
+    conda:
+        "../envs/scanpy.yaml"
+    script:
+        "../scripts/preprocessing/extract_metadata.py"
