@@ -3,7 +3,7 @@ library(mistyR)
 library(future)
 
 # data manipulation
-library(tidyverse)
+library(dplyr)
 library(purrr)
 library(distances)
 
@@ -30,11 +30,13 @@ if(exists("snakemake")){
   
   bypass_intra <- FALSE
   
-  view_fp <- 'data/working/ST/Misty/brain/Sample_304_C1/functional_view.rds'
+  view_type <- 'celltype'
+  sample <- 'BG-L_OVA15-16'
+  
+  view_fp <- stringr::str_glue('results/Misty/{view_type}/views/{sample}_view.rds', view_type = view_type, sample = sample)
   cores <- 6
   output_dir <- "mistyTest"
-  
-  view_type <- snakemake@wildcards$view_type
+
 }
 
 
