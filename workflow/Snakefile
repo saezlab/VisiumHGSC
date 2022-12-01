@@ -11,7 +11,7 @@ rule all:
        expand('results/functional/plate/activities_{network}.csv', network = ['pathways', 'cytokines']),
        expand('plots/functional/plate/spatial_activities_{network}.pdf', network = ['pathways', 'cytokines']),
        'results/Misty/celltype/paraviews.csv',
-       expand('results/Misty/celltype/views/{sample}_view.rds', sample = config['samples'])
+       expand('results/Misty/celltype/models/{sample}', sample = config['samples'])
     #    expand('results/sc-data/ref_markers_{CT}.csv', CT = ['cell_type', "cell_subtype"]),
     #    expand('results/integrated/plate_scores_{CT}.csv', CT = ['cell_type', "cell_subtype"]),
     #    'plots/CTprop/cell2location_umap.pdf'
