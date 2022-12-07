@@ -2,8 +2,8 @@
 # results from cell2location (provided by collaborators)
 rule merge_adata:
     input:
-        adata_w_c2l = 'data/sp.h5ad',
-        integrated = 'results/integrated/{split_type}.h5ad'
+        'results/integrated/{split_type}.h5ad',
+        expand('data/cell2location/{sample}_sp.h5ad', sample = config['samples'])
     output:
         merged = 'results/structural/{split_type}/merged.h5ad'
     conda:

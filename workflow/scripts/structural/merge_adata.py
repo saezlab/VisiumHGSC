@@ -1,20 +1,27 @@
 # %%
 import scanpy as sc
-import os
+import sys
 import pandas as pd
 import decoupler as dc
 
 # %%
 if 'snakemake' in locals():
-    adata_fp = snakemake.input[0]
-    adata_s_fp = snakemake.input[1]
+    adata_s_fp = snakemake.input[0]
+    adata_fp = snakemake.input[1]
+
+    if len(snakemake.input) > 2:
+        adata_fps = snakemake.input[1:]
 else:
     adata_fp = '../../../data/sp.h5ad'
     adata_s_fp = '../../../results/integrated/plate.h5ad'
 
 
 # %%
-adata = sc.read_h5ad(adata_fp)
+
+if 'adata_fps' in locals():
+    adata = sc.concat([sc.read_h5ad(file) for file in adata_fps], join="outer")
+else:
+    adata = sc.read_h5ad(adata_fp)
 print(adata)
 
 # %%
@@ -67,8 +74,3 @@ if 'snakemake' in locals():
     adata_seurat.write_h5ad(snakemake.output[0])
 else:
     adata_seurat.write_h5ad('test.h5ad')
-
-# %%
-
-
-
