@@ -21,8 +21,7 @@ else:
 if 'adata_fps' in locals():
     adata = sc.concat([sc.read_h5ad(file) for file in adata_fps], join="outer")
     temp = sc.read_h5ad(adata_fp)
-    adata.uns['mod'] = {}
-    adata.uns['mod']['factor_names'] = temp['mod']['factor_names'].copy()
+    adata.uns = {'mod': {'factor_names': temp['mod']['factor_names'].copy()}}
     del temp
 else:
     adata = sc.read_h5ad(adata_fp)
