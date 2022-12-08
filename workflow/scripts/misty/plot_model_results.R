@@ -202,7 +202,7 @@ if(view == 'celltype'){
 
 if(exists("snakemake")) pdf(snakemake@output[[1]])
 
-imp.signature <- extract_signature(results, type = "importance", trim = 2)
+imp.signature <- extract_signature(results, type = "importance", trim = 1)
 imp.signature.pca <- prcomp(imp.signature %>% select(-sample))
 
 ggplot(
