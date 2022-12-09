@@ -31,3 +31,6 @@ misty:
     celltype:
         bypass_intra: False
         plots: {'trim': 1, 'cutoff': 1}
+    CTpathways:
+        bypass_intra: True
+        plots: {'trim': 1, 'cutoff': 1}

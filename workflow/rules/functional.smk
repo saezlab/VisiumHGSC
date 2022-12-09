@@ -34,3 +34,25 @@ rule plot_activities:
         "../envs/scanpy.yaml"
     script:
         "../scripts/functional/plot_spatial_activities.py"
+
+rule plot_pathways:
+    input:
+        adata = 'results/structural/{split_type}/merged.h5ad',
+        functional = 'results/functional/{split_type}/activities_{network}.csv'
+    output:
+        'plots/functional/{split_type}/pathways.pdf'
+    conda:
+        "../envs/scanpy.yaml"
+    script:
+        '../scripts/functional/spatial_plots.py'
+
+rule plot_paraviews:
+    input:
+        adata = 'results/structural/{split_type}/merged.h5ad',
+        functional = 'results/Misty/{view_type}/paraviews.csv'
+    output:
+        'plots/functional/{split_type}/{view_type}_paraviews.pdf'
+    conda:
+        "../envs/scanpy.yaml"
+    script:
+        '../scripts/functional/spatial_plots.py'
