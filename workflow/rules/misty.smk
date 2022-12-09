@@ -37,7 +37,7 @@ rule get_pathwaysCT_views:
 
 rule get_combine_paraviews:
     input:
-        expand('results/Misty/{view_type}/views/{sample}_paraview.csv', sample = config['samples'])
+        expand('results/Misty/{{view_type}}/views/{sample}_paraview.csv', sample = config['samples'])
     output:
         'results/Misty/{view_type}/paraviews.csv'
     shell:
