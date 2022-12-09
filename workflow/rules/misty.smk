@@ -22,9 +22,22 @@ rule get_celltype_views:
     script:
         "../scripts/misty/make_views.R"
 
+rule get_pathwaysCT_views:
+    input:
+        'results/Misty/coordinates.csv',
+        'results/functional/plate/activities_pathways.csv',
+        'results/Misty/cellprop.csv'
+    output:
+        view = 'results/Misty/pathwaysCT/views/{sample}_view.rds',
+        paraview = 'results/Misty/pathwaysCT/views/{sample}_paraview.csv'
+    conda:
+        "../envs/misty.yaml"
+    script:
+        "../scripts/misty/make_views.R"
+
 rule get_combine_paraviews:
     input:
-        expand('results/Misty/celltype/views/{sample}_paraview.csv', sample = config['samples'])
+        expand('results/Misty/{view_type}/views/{sample}_paraview.csv', sample = config['samples'])
     output:
         'results/Misty/{view_type}/paraviews.csv'
     shell:

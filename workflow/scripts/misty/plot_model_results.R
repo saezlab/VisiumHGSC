@@ -112,7 +112,7 @@ extract_contrast_interactions <- function (misty.results.from, misty.results.to,
   return(interactions)
 }
 
-get_differential_interactions <- function(metadata, grouping_var, groups){
+get_differential_interactions <- function(metadata, grouping_var, groups, cutoff.from = 1, cutoff.to = 1){
   
   grouped.results <- lapply(groups, function(group){
     group.results <- metadata %>% filter(!!as.symbol(grouping_var) == group) %>% pull(path) %>%
@@ -127,7 +127,7 @@ get_differential_interactions <- function(metadata, grouping_var, groups){
     
     # get interactions that are only in to.group, but not from.group
     # using default cutoff of 1 (on Importance), as 'being present'
-    interactions <- extract_contrast_interactions(grouped.results[[from.group]], grouped.results[[to.group]]) %>% 
+    interactions <- extract_contrast_interactions(grouped.results[[from.group]], grouped.results[[to.group]], cutoff.from = cutoff.from, cutoff.to = cutoff.to) %>% 
       tidyr::unite(col = 'Interaction', .data$view, .data$Predictor, .data$Target, sep = '_')
     
     # extract the importances per sample for these interactions and add metadata
@@ -244,7 +244,7 @@ if(view != 'functional'){
   
   results %>% plot_view_contributions(trim = 1)
   
-  results %>% plot_interaction_heatmap(intra_name, trim = plot_params$trim, cutoff = plot_params$cutoff, clean = cleaning)
+  results %>% plot_interaction_heatmap(intra_name, cutoff = 0.5, clean = cleaning)
   
   results %>% plot_interaction_heatmap('para', cutoff = 0.5, trim = 0.5)
 }
