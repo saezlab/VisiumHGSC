@@ -22,23 +22,23 @@ rule get_activities:
     script:
         "../scripts/functional/compute_activities.py"
 
-rule plot_activities:
-    input:
-        data = 'results/structural/{split_type}/merged.h5ad',
-        activities = 'results/functional/{split_type}/activities_{network}.csv'
-    output:
-        'plots/functional/{split_type}/spatial_activities_{network}.pdf'
-    params:
-        lambda w: config['functional'][w.network]
-    conda:
-        "../envs/scanpy.yaml"
-    script:
-        "../scripts/functional/plot_spatial_activities.py"
+# rule plot_activities:
+#     input:
+#         data = 'results/structural/{split_type}/merged.h5ad',
+#         activities = 'results/functional/{split_type}/activities_{network}.csv'
+#     output:
+#         'plots/functional/{split_type}/spatial_activities_{network}.pdf'
+#     params:
+#         lambda w: config['functional'][w.network]
+#     conda:
+#         "../envs/scanpy.yaml"
+#     script:
+#         "../scripts/functional/plot_spatial_activities.py"
 
 rule plot_pathways:
     input:
         adata = 'results/structural/{split_type}/merged.h5ad',
-        functional = 'results/functional/{split_type}/activities_{network}.csv'
+        functional = 'results/functional/{split_type}/activities_pathways.csv'
     output:
         'plots/functional/{split_type}/pathways.pdf'
     conda:

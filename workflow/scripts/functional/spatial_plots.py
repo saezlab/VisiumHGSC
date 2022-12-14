@@ -26,7 +26,6 @@ else:
 
 # %%
 adata = sc.read_h5ad(adata_fp)
-del adata.layers['SCT']
 adata
 
 # %%
@@ -50,7 +49,7 @@ with PdfPages(output_fp) as output_pdf:
         axs = axs.flatten()
 
         for i, library in enumerate(sorted(adata.obs['plate'].unique())):
-            ad = adata[adata.obs.plate == library, :]#.copy()
+            ad = acts[acts.obs.plate == library, :]#.copy()
             sc.pl.spatial(
                 ad,
                 img_key='lowres',

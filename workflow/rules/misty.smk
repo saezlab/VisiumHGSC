@@ -38,8 +38,8 @@ rule get_pathwaysCT_views:
 rule get_CTpathways_views:
     input:
         'results/Misty/coordinates.csv',
-        'results/functional/plate/activities_pathways.csv',
-        'results/Misty/cellprop.csv'
+        'results/Misty/cellprop.csv',
+        'results/functional/plate/activities_pathways.csv'
     output:
         view = 'results/Misty/CTpathways/views/{sample}_view.rds',
         paraview = 'results/Misty/CTpathways/views/{sample}_paraview.csv'
