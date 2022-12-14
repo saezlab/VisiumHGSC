@@ -20,6 +20,18 @@ reformat_samples <- function(misty.results, view){
   return(results)
 }
 
+reformat_samples <- function(misty.results, view){
+  
+  results <- lapply(misty.results, function(x){
+    if('sample' %in% colnames(x)){
+      x$sample <- x$sample %>% basename() 
+    }
+    return(x)
+  })
+  
+  return(results)
+}
+
 extract_contrast_interactions <- function (misty.results.from, misty.results.to, 
                                            views = NULL, cutoff.from = 1, cutoff.to = 1, 
                                            trim = -Inf, trim.measure = c(
@@ -166,6 +178,7 @@ if(exists("snakemake")){
   
 }else{
   
+  # view <- 'celltype'
   view <- 'celltype'
   
   plot_params <- list(trim = 1, cutoff = 1)
@@ -194,7 +207,16 @@ results <- metadata %>% pull(path) %>% collect_results() %>% reformat_samples()
 if(view == 'celltype'){
   intra_name <- 'intra'
   cleaning <- FALSE
-  
+}
+
+if(view == 'pathwaysCT'){
+  intra_name <- 'intra_act'
+  cleaning <- TRUE
+}
+
+if(view == 'CTpathways'){
+  intra_name <- 'intra_act'
+  cleaning <- TRUE
 }
 
 
@@ -202,8 +224,9 @@ if(view == 'celltype'){
 
 if(exists("snakemake")) pdf(snakemake@output[[1]])
 
-imp.signature <- extract_signature(results, type = "importance", trim = 1)
+imp.signature <- extract_signature(results, type = "importance")
 imp.signature.pca <- prcomp(imp.signature %>% select(-sample))
+# imp.signature.umap <- uwot::umap(imp.signature %>% select(-sample))
 
 ggplot(
   left_join(bind_cols(sample = metadata %>%  pull(sample), imp.signature.pca$x), metadata, by = 'sample'),
@@ -284,7 +307,7 @@ views <- contrast.interactions %>% dplyr::pull(.data$view) %>% unique() %>% sort
 views %>% purrr::walk(function(current.view){
   
   long.data <- contrast.interactions %>% dplyr::filter(.data$view == current.view) %>%
-    dplyr::mutate(sig = -log10(.data$p.adj) * sign(.data$t.value), is.sig.05 = .data$p.adj < 0.05, is.sig.1 = .data$p.adj < 0.1)
+    dplyr::mutate(sig = -log10(.data$p.adj) * sign(.data$t.value), is.sig.05 = .data$p.value < 0.05, is.sig.1 = .data$p.adj < 0.1)
   
   inter.plot <- long.data %>% ggplot2::ggplot(ggplot2::aes(x = .data$Predictor, y = .data$Target)) +
     ggplot2::geom_tile(ggplot2::aes(fill = .data$sig)) + ggplot2::theme_classic() + 
