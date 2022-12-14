@@ -166,6 +166,7 @@ if(exists("snakemake")){
   
   tissue <- snakemake@wildcards$tissue
   model <- snakemake@wildcards$view_type
+  contrast <- snakemake@wildcards$contrast
   
   metadata_fp <- snakemake@input[[1]]
   result_folders <- unlist(snakemake@input[2:length(snakemake@input)])
@@ -176,7 +177,6 @@ if(exists("snakemake")){
 }else{
   tissue <- 'brain'
   model <- 'celltype'
-  contrast <- 
   
   samples <- list.files(paste('data/original/ST/visium_data', tissue, sep = '_')) %>% sort()
   
