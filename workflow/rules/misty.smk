@@ -82,3 +82,15 @@ rule plot_misty_results:
         "../envs/misty.yaml"
     script:
         "../scripts/misty/plot_model_results.R"
+
+rule get_dif_interactions:
+    input:
+        'results/integrated/sample_metadata.csv',
+        lambda w: expand('results/Misty/{{view_type}}/models/{sample}', sample = config['samples'])
+    output: 
+        'results/Misty/{view_type}/{contrast}_importances.csv',
+        'results/Misty{view_type}/{contrast}_diffInteractions.csv'
+    conda:
+        "../envs/misty.yaml"
+    script:
+        "../scripts/misty/get_differential_interactions.R"
