@@ -133,7 +133,7 @@ get_differential_interactions <- function(metadata, grouping_var, groups, cutoff
         importances <- bind_rows(list(grouped.results[[1]]$importances, grouped.results[[2]]$importances)) %>% tidyr::unite(col = 'Interaction', .data$view, .data$Predictor, .data$Target, remove = FALSE) %>% 
             dplyr::filter(.data$Interaction %in% (interactions %>% dplyr::pull(.data$Interaction))) %>% dplyr::select(-.data$Predictor, -.data$Target) %>% dplyr::left_join(metadata, by = 'sample')
         
-        if(output.importances) imp <<- append(imp, list(imp))
+        if(output.importances) imp <<- append(imp, list(importances))
         
         # t-test over conditions and do BH p.value adjustment
         stats <- importances %>% dplyr::group_by(.data$Interaction) %>% rstatix::t_test(data =., as.formula(paste('Importance', '~', grouping_var))) %>% 
