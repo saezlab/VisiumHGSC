@@ -93,7 +93,7 @@ rule get_dif_interactions:
         lambda w: expand('results/Misty/{{view_type}}/models/{sample}', sample = config['samples'])
     output: 
         'results/Misty/{view_type}/{contrast}_importances.csv',
-        'results/Misty/{view_type}/{contrast}_diffInteractions.csv'
+        temp('results/Misty/{view_type}/{contrast}_diffInteractions.csv')
     conda:
         "../envs/misty.yaml"
     script:
@@ -124,6 +124,18 @@ rule combine_interaction_corr:
     input:
         lambda w: expand('results/Misty/{{view_type}}/correlations/{sample}_Corr.csv', sample = config['samples'])
     output:
-        corr = 'results/Misty/{view_type}_Corr.csv'
+        corr = 'results/Misty/{view_type}/model_correlations.csv'
     shell:
         "awk 'FNR==1 && NR!=1{{next;}}{{print}}' {input} >> {output}"
+
+rule plot_interaction_corr:
+    input:
+        metadata = 'results/integrated/sample_metadata.csv',
+        interactions = 'results/Misty/{view_type}/diffInteractions.csv',
+        correlations = 'results/Misty/{view_type}/model_correlations.csv'
+    output:
+        'plots/Misty/{view_type}_interaction_correlations.pdf'
+    conda:
+        "../envs/misty.yaml"
+    script:
+        "../scripts/misty/plot_interaction_correlations.R"
