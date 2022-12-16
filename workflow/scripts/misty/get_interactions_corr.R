@@ -94,5 +94,5 @@ output <- targets %>% map_dfr(function(target){
 }) %>% mutate(sample = sample)
 
 if(exists("snakemake")){
-  write.csv(output, file = output_fp, sep = ",")
+  write.csv(output, file = output_fp, sep = ",", row.names = FALSE)
 }
