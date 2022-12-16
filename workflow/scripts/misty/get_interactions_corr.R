@@ -13,7 +13,6 @@ if(exists("snakemake")){
   
   view_type <- snakemake@wildcards$view_type
   sample <- snakemake@wildcards$sample
-  tissue <- snakemake@wildcards$tissue
   
   correlation.type <- snakemake@params$corr
   
@@ -27,22 +26,25 @@ if(exists("snakemake")){
   #files for testing in Rstudio
   
   view_type <- 'celltype'
-  sample <- 'Sample_158_A1'
-  tissue <- 'brain'
+  sample <- 'BG-L_OVA15-16'
   
   correlation.type <- 'pearson'
   
-  interactions_fp <- str_glue('results/Misty/{tissue}/{view_type}_diffInteractions.csv', tissue = tissue, view_type=view_type, .sep = "")
-  view_fp <- str_glue('results/ST/Misty/{tissue}/{sample}/{view_type}_view.rds', tissue = tissue, sample=sample, view_type=view_type, .sep = "")
+  interactions_fp <- str_glue('results/Misty/{view_type}/diffInteractions.csv', view_type=view_type, .sep = "")
+  view_fp <- str_glue('results/Misty/{view_type}/views/{sample}_view.rds', sample=sample, view_type=view_type, .sep = "")
   
-  output_fp <- 'test.csv'
+
 }
 
 
 # load data ---------------------------------------------------------------
 
 interactions <- read.csv(interactions_fp) %>% select(view, Target, Predictor) %>% dplyr::distinct(.keep_all = TRUE)
-misty.views <- readRDS(view_fp)
+
+misty.views <- readRDS(view_fp) %>% lapply(function(view){
+    if(class(view) != "character") colnames(view$data) <- gsub('\\.|_','',colnames(view$data))
+    return(view)
+})
 
 
 
