@@ -92,7 +92,7 @@ rule get_dif_interactions:
         'results/integrated/sample_metadata.csv',
         lambda w: expand('results/Misty/{{view_type}}/models/{sample}', sample = config['samples'])
     output: 
-        'results/Misty/{view_type}/{contrast}_importances.csv',
+        temp('results/Misty/{view_type}/{contrast}_importances.csv'),
         temp('results/Misty/{view_type}/{contrast}_diffInteractions.csv')
     conda:
         "../envs/misty.yaml"
