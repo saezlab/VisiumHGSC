@@ -14,7 +14,7 @@ rule all:
        expand('results/Misty/{view_type}/models/{sample}', sample = config['samples'], view_type = ['celltype', 'pathwaysCT', 'CTpathways']),
        'plots/functional/plate/pathways.pdf',
        expand('plots/functional/plate/{view_type}_paraviews.pdf', view_type = ['celltype', 'pathwaysCT', 'CTpathways']),
-       expand('results/Misty/celltype/{contrast}_importances.csv', contrast = ['HCvsBG', 'LvsS'])
+       'results/Misty/celltype_Corr.csv'
 
 
 module preprocess:

@@ -219,8 +219,8 @@ inter <- get_differential_interactions(metadata, grouping_var, groups, cutoff.fr
     
 if(exists("snakemake")){
   
-  write.csv(inter$importances %>% mutate(model = model), file = importances_fp, sep = ",")
-  write.csv(inter$interactions %>% mutate(model = model), file = interactions_fp, sep = ",")
+  write.csv(inter$importances %>% mutate(model = model, contrast = contrast), file = importances_fp, sep = ",")
+  write.csv(inter$interactions %>% mutate(model = model, contrast = contrast), file = interactions_fp, sep = ",")
   
 }
 

@@ -83,6 +83,10 @@ rule plot_misty_results:
     script:
         "../scripts/misty/plot_model_results.R"
 
+############################
+#   Post-processing Misty results
+############################
+
 rule get_dif_interactions:
     input:
         'results/integrated/sample_metadata.csv',
@@ -94,3 +98,32 @@ rule get_dif_interactions:
         "../envs/misty.yaml"
     script:
         "../scripts/misty/get_differential_interactions.R"
+
+rule combine_contrast_interactions:
+    input:
+        expand('results/Misty/{{view_type}}/{contrast}_diffInteractions.csv', contrast = ['HCvsBG', 'LvsS'])
+    output:
+        'results/Misty/{view_type}/diffInteractions.csv'
+    shell:
+        "awk 'FNR==1 && NR!=1{{next;}}{{print}}' {input} >> {output}"
+
+rule get_interaction_corr:
+    input:
+        interactions = 'results/Misty/{view_type}/diffInteractions.csv',
+        view = 'results/Misty/{view_type}/views/{sample}_view.rds'
+    output:
+        corr = temp('results/Misty/{view_type}/correlations/{sample}_Corr.csv')
+    params:
+        corr = 'pearson'
+    conda:
+        "../envs/misty.yaml"
+    script:
+        "../scripts/misty/get_interactions_corr.R"
+
+rule combine_interaction_corr:
+    input:
+        lambda w: expand('results/Misty/{{view_type}}/correlations/{sample}_Corr.csv', sample = config['samples'])
+    output:
+        corr = 'results/Misty/{view_type}_Corr.csv'
+    shell:
+        "awk 'FNR==1 && NR!=1{{next;}}{{print}}' {input} >> {output}"
