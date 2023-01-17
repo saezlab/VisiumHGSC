@@ -108,13 +108,15 @@ extract_contrast_interactions <- function (misty.results.from, misty.results.to,
   return(interactions)
 }
 
-get_differential_interactions <- function(metadata, grouping_var, groups){
+get_differential_interactions <- function(metadata, grouping_var, groups, correction = 'Target', output.importances = FALSE){
   
   grouped.results <- lapply(groups, function(group){
     group.results <- metadata %>% filter(!!as.symbol(grouping_var) == group) %>% pull(path) %>%
       collect_results() %>% reformat_samples()
   })
   names(grouped.results) <- groups
+  
+  if(output.importances) imp <- list()
   
   
   contrast.interactions <- names(grouped.results) %>%  purrr::map_dfr(function(to.group){
@@ -130,19 +132,27 @@ get_differential_interactions <- function(metadata, grouping_var, groups){
     importances <- bind_rows(list(grouped.results[[1]]$importances, grouped.results[[2]]$importances)) %>% tidyr::unite(col = 'Interaction', .data$view, .data$Predictor, .data$Target, remove = FALSE) %>% 
       dplyr::filter(.data$Interaction %in% (interactions %>% dplyr::pull(.data$Interaction))) %>% dplyr::select(-.data$Predictor, -.data$Target) %>% dplyr::left_join(metadata, by = 'sample')
     
+    if(output.importances) imp <<- append(imp, list(importances))
+    
     # t-test over conditions and do BH p.value adjustment
     stats <- importances %>% dplyr::group_by(.data$Interaction) %>% rstatix::t_test(data =., as.formula(paste('Importance', '~', grouping_var))) %>% 
-      dplyr::left_join(importances %>% dplyr::select(.data$Interaction, .data$view) %>% dplyr::distinct(), by = 'Interaction') %>% dplyr::group_by(.data$view) %>% 
-      rstatix::adjust_pvalue(method = "BH") %>% dplyr::select(.data$view, .data$Interaction, .data$statistic, .data$p, .data$p.adj) %>% dplyr::rename(t.value = .data$statistic, p.value = .data$p) %>% dplyr::ungroup()
+      dplyr::left_join(importances %>% dplyr::select(.data$Interaction, .data$view) %>% dplyr::distinct(), by = 'Interaction') %>%
+      dplyr::select(.data$view, .data$Interaction, .data$statistic, .data$p) %>% dplyr::rename(t.value = .data$statistic, p.value = .data$p) %>% dplyr::ungroup()
     
     stats %>% plyr::adply(.margins = 1, function(x){
       x$Interaction <- base::gsub(paste('^', x$view, '_' , sep=''), '', x$Interaction)
       return(x) 
     }) %>% tidyr::separate(col=.data$Interaction, into = c('Predictor', 'Target'), sep = '_') %>% dplyr::mutate(only.in = to.group)
     
-  })
+  }) %>% dplyr::group_by(!!as.symbol(correction)) %>% rstatix::adjust_pvalue(method = "BH", p.col = p.value, output.col = p.adj)
   
-  return(contrast.interactions)
   
-}
+  if(output.importances){
+      imp <- dplyr::bind_rows(imp)
+      return(list(interactions = contrast.interactions, importances = imp))
+  }else{
+      return(contrast.interactions)
+  }
+  
+} 
 

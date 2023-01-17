@@ -37,7 +37,19 @@ if(exists("snakemake")){
 # load data ---------------------------------------------------------------
 
 metadata <- read.csv(metadata_fp)
-interactions <- read.csv(interactions_fp) %>% filter(p.value <= 0.05) # select only significant interactions
+interactions <- read.csv(interactions_fp)
+
+title_suffix <- ''
+
+if((interactions %>% filter(p.adj <= 0.05) %>% nrow()) < 1){
+  interactions <- interactions %>% arrange(p.adj) %>% head(4)
+  title_suffix <- '\n(only n.s.)'
+}else{
+  interactions <- interactions %>% filter(p.adj <= 0.05)
+}
+
+
+ # select only significant interactions
 correlations <- read.csv(correlations_fp)
 
 
@@ -55,7 +67,7 @@ interactions %>% pull(contrast) %>% unique() %>% walk(function(contrast){
         meta_df <- metadata
         grouping_var <- 'Confidence'
         groups <-levels(metadata %>% pull(matches('Confidence')))[1:2]
-    }else if (contrast == 'LvsS'){
+    }else if (contrast == 'ShortvsLong'){
         meta_df <- metadata %>% filter(Confidence == 'High confidence')
         grouping_var <- 'PFI'
         groups <- c('Short', 'Long')
@@ -70,9 +82,10 @@ interactions %>% pull(contrast) %>% unique() %>% walk(function(contrast){
     to.plot[grouping_var] <- factor(to.plot %>% pull(grouping_var), levels = groups)
     
     #make boxplot
-    plot <- ggplot(data = to.plot, mapping = aes(y = corr, x = interaction, fill = !!as.symbol(grouping_var))) + geom_boxplot(outlier.shape = NA) + 
-        facet_wrap(~interaction, scale="free") + theme_bw() + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank()) +
-        labs(y = 'Correlation', title = tit)
+    plot <- ggplot(data = to.plot, mapping = aes(y = corr, x = !!as.symbol(grouping_var), fill = !!as.symbol(grouping_var))) + geom_boxplot(outlier.shape = NA) + 
+        geom_jitter(width = 0.3, height = 0) + facet_wrap(~interaction, scale="free_x") + theme_bw() +
+        theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank()) +
+        labs(y = 'Correlation', title = paste(tit, title_suffix, sep = ''))
     print(plot)
 })
 
