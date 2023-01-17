@@ -64,9 +64,9 @@ interactions %>% pull(contrast) %>% unique() %>% walk(function(contrast){
     
     #data selection based on contrast of interest
     if(contrast == 'HCvsBG'){
-        meta_df <- metadata
+        meta_df <- metadata %>% filter(Confidence != 'Benign')
         grouping_var <- 'Confidence'
-        groups <-levels(metadata %>% pull(matches('Confidence')))[1:2]
+        groups <- c('High confidence', 'Low confidence')
     }else if (contrast == 'ShortvsLong'){
         meta_df <- metadata %>% filter(Confidence == 'High confidence')
         grouping_var <- 'PFI'
@@ -78,15 +78,18 @@ interactions %>% pull(contrast) %>% unique() %>% walk(function(contrast){
     to.plot <- left_join(interactions %>% select(view, Predictor, Target), correlations %>% filter(sample %in% meta_df$Sample)) %>% 
         left_join(meta_df, by =c('sample' = 'Sample')) %>%  unite(col = interaction, view, Predictor, sep = ": ") %>% 
         unite(col = interaction, interaction, Target, sep = " -> ")
-    
+    print(groups)
+    print(to.plot)
     to.plot[grouping_var] <- factor(to.plot %>% pull(grouping_var), levels = groups)
     
-    #make boxplot
-    plot <- ggplot(data = to.plot, mapping = aes(y = corr, x = !!as.symbol(grouping_var), fill = !!as.symbol(grouping_var))) + geom_boxplot(outlier.shape = NA) + 
-        geom_jitter(width = 0.3, height = 0) + facet_wrap(~interaction, scale="free_x") + theme_bw() +
-        theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank()) +
-        labs(y = 'Correlation', title = paste(tit, title_suffix, sep = ''))
-    print(plot)
+    if(to.plot %>% nrow() > 0){
+        #make boxplot
+        plot <- ggplot(data = to.plot, mapping = aes(y = corr, x = !!as.symbol(grouping_var), fill = !!as.symbol(grouping_var))) + geom_boxplot(outlier.shape = NA) + 
+            geom_jitter(width = 0.3, height = 0) + facet_wrap(~interaction, scale="free_x") + theme_bw() +
+            theme(axis.title.x=element_blank()) +
+            labs(y = 'Correlation', title = paste(tit, title_suffix, sep = ''))
+        print(plot)
+    }
 })
 
 if(exists("snakemake")) dev.off()

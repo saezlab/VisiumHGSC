@@ -10,7 +10,7 @@ cat("DEBUG: defining inputs, outputs, and script parameters\n")
 if(exists("snakemake")){
   
   density_fp <- snakemake@input[[1]]
-  metadata <- snakemake@input[[2]]
+  metadata_fp <- snakemake@input[[2]]
   
 }else{
   
