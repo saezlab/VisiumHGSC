@@ -7,7 +7,7 @@ rule cell_density:
     conda:
         '../envs/misty.yaml'
     script:
-        '../scripts/structural/cell_density.R'
+        '../scripts/structural/plot_cell_density.R'
 
 
 # merge normalised data from Seurat with
