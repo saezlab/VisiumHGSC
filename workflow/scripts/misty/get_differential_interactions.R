@@ -179,7 +179,7 @@ if(exists("snakemake")){
   tissue <- 'brain'
   model <- 'celltype'
   
-  helpers_fp <- 'workflow/helpers/misty.R'
+  helpers_fp <- 'workflow/scripts/helpers/misty.R'
   
   samples <- list.files(paste('data/original/ST/visium_data', tissue, sep = '_')) %>% sort()
   

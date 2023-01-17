@@ -108,7 +108,7 @@ extract_contrast_interactions <- function (misty.results.from, misty.results.to,
   return(interactions)
 }
 
-get_differential_interactions <- function(metadata, grouping_var, groups, correction = 'Target', output.importances = FALSE){
+get_differential_interactions <- function(metadata, grouping_var, groups, cutoff.from = 1, cutoff.to = 1, correction = 'Target', output.importances = FALSE){
   
   grouped.results <- lapply(groups, function(group){
     group.results <- metadata %>% filter(!!as.symbol(grouping_var) == group) %>% pull(path) %>%
@@ -125,7 +125,7 @@ get_differential_interactions <- function(metadata, grouping_var, groups, correc
     
     # get interactions that are only in to.group, but not from.group
     # using default cutoff of 1 (on Importance), as 'being present'
-    interactions <- extract_contrast_interactions(grouped.results[[from.group]], grouped.results[[to.group]]) %>% 
+    interactions <- extract_contrast_interactions(grouped.results[[from.group]], grouped.results[[to.group]], cutoff.from = cutoff.from, cutoff.to = cutoff.to) %>% 
       tidyr::unite(col = 'Interaction', .data$view, .data$Predictor, .data$Target, sep = '_')
     
     # extract the importances per sample for these interactions and add metadata
@@ -144,7 +144,9 @@ get_differential_interactions <- function(metadata, grouping_var, groups, correc
       return(x) 
     }) %>% tidyr::separate(col=.data$Interaction, into = c('Predictor', 'Target'), sep = '_') %>% dplyr::mutate(only.in = to.group)
     
-  }) %>% dplyr::group_by(!!as.symbol(correction)) %>% rstatix::adjust_pvalue(method = "BH", p.col = p.value, output.col = p.adj)
+  })
+  print(colnames(contrast.interactions))
+  contrast.interactions <- contrast.interactions %>% dplyr::group_by(!!as.symbol(correction)) %>% rstatix::adjust_pvalue(method = "BH", p.col = 'p.value', output.col = 'p.adj')
   
   
   if(output.importances){

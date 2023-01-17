@@ -72,7 +72,7 @@ rule run_views:
 
 rule plot_misty_results:
     input:
-        'workflow/helpers/misty.R',
+        'workflow/scripts/helpers/misty.R',
         'results/integrated/sample_metadata.csv',
         lambda w: expand('results/Misty/{{view_type}}/models/{sample}', sample = config['samples'])
     output: 
@@ -90,7 +90,7 @@ rule plot_misty_results:
 
 rule get_dif_interactions:
     input:
-        'workflow/helpers/misty.R',
+        'workflow/scripts/helpers/misty.R',
         'results/integrated/sample_metadata.csv',
         lambda w: expand('results/Misty/{{view_type}}/models/{sample}', sample = config['samples'])
     output: 
