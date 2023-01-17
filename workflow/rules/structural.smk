@@ -1,3 +1,15 @@
+rule cell_density:
+    input:
+        'data/cell_per_location.csv',
+        'results/integrated/sample_metadata.csv'
+    output:
+        'plots/structural/cell_density.pdf'
+    conda:
+        '../envs/misty.yaml'
+    script:
+        '../scripts/structural/cell_density.R'
+
+
 # merge normalised data from Seurat with
 # results from cell2location (provided by collaborators)
 rule merge_adata:
