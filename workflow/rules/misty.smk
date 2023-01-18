@@ -103,7 +103,7 @@ rule get_dif_interactions:
 
 rule combine_contrast_interactions:
     input:
-        expand('results/Misty/{{view_type}}/{contrast}_diffInteractions.csv', contrast = ['HCvsBG', 'ShortvsLong'])
+        expand('results/Misty/{{view_type}}/{contrast}_diffInteractions.csv', contrast = ['HCvsBG', 'ShortvsLongHC', 'ShortvsLongBG'])
     output:
         'results/Misty/{view_type}/diffInteractions.csv'
     shell:
