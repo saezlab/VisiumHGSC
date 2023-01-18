@@ -27,6 +27,15 @@ metadata <- read.csv(metadata_fp)
 
 density <- density %>%  left_join(metadata, by ='Sample')
 
+wilcox.test(density %>% filter(Confidence == 'High confidence', PFI == 'Long') %>% pull(cell_per_location),
+            density %>% filter(Confidence == 'High confidence', PFI == 'Short') %>% pull(cell_per_location))
+
+wilcox.test(density %>% filter(PFI == 'Long') %>% pull(cell_per_location),
+            density %>% filter(PFI == 'Short') %>% pull(cell_per_location))
+
+wilcox.test(density %>% filter(PFI == 'Benign') %>% pull(cell_per_location),
+            density %>% filter(Confidence == 'High confidence', PFI != 'Benign') %>% pull(cell_per_location))
+
 
 # plot --------------------------------------------------------------------
 

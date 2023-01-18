@@ -210,10 +210,14 @@ results <- metadata %>% pull(path) %>% collect_results() %>% reformat_samples()
 if(contrast == 'HCvsBG'){
     grouping_var <- 'Confidence'
     groups <-levels(metadata %>% pull(matches('Confidence')))[1:2]
-}else if (contrast == 'ShortvsLong'){
+}else if (contrast == 'ShortvsLongHC'){
     metadata <- metadata %>% filter(Confidence == 'High confidence')
     grouping_var <- 'PFI'
     groups <- levels(metadata %>% pull(matches('PFI')))[1:2]
+}else if (contrast == 'ShortvsLongBG'){
+  metadata <- metadata %>% filter(Confidence == 'Low confidence')
+  grouping_var <- 'PFI'
+  groups <- levels(metadata %>% pull(matches('PFI')))[1:2]
 }
   
 # grouped results ---------------------------------------------------------
@@ -222,8 +226,8 @@ inter <- get_differential_interactions(metadata, grouping_var, groups, correctio
     
 if(exists("snakemake")){
   
-  write.csv(inter$importances %>% mutate(model = model, contrast = contrast), file = importances_fp, sep = ",")
-  write.csv(inter$interactions %>% mutate(model = model, contrast = contrast), file = interactions_fp, sep = ",")
+  write.csv(inter$importances %>% mutate(model = model, contrast = contrast), file = importances_fp, sep = ",", row.names = FALSE)
+  write.csv(inter$interactions %>% mutate(model = model, contrast = contrast), file = interactions_fp, sep = ",", row.names = FALSE)
   
 }
 

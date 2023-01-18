@@ -137,6 +137,8 @@ rule plot_interaction_corr:
         correlations = 'results/Misty/{view_type}/model_correlations.csv'
     output:
         'plots/Misty/{view_type}_interaction_correlations.pdf'
+    params:
+        sig_cutoff = 0.05
     conda:
         "../envs/misty.yaml"
     script:
