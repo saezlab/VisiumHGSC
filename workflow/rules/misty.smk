@@ -78,7 +78,8 @@ rule plot_misty_results:
     output: 
         'plots/Misty/{view_type}_misty.pdf'
     params:
-        lambda w: config['misty'][w.view_type]['plots']
+        lambda w: config['misty'][w.view_type]['plots'],
+        sig_cutoff = config['misty']['interaction_sig_cutoff']
     conda:
         "../envs/misty.yaml"
     script:
@@ -138,7 +139,7 @@ rule plot_interaction_corr:
     output:
         'plots/Misty/{view_type}_interaction_correlations.pdf'
     params:
-        sig_cutoff = 0.05
+        sig_cutoff = config['misty']['interaction_sig_cutoff']
     conda:
         "../envs/misty.yaml"
     script:

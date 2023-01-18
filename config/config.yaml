@@ -22,6 +22,7 @@ functional:
 
 misty:
     random_seed: 42
+    interaction_sig_cutoff: 0.05
     functional:
         bypass_intra: True
         plots: {'trim': 2, 'cutoff': 1.5}
