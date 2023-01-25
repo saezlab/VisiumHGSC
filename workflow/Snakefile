@@ -9,12 +9,13 @@ rule all:
        expand("plots/integration/{split_type}_umaps.pdf", split_type = ['plate']),
        'plots/structural/plate/cell2location_umap.pdf',
        expand('results/functional/plate/activities_{network}.csv', network = ['pathways', 'cytokines']),
-    #    expand('plots/functional/plate/spatial_activities_{network}.pdf', network = ['pathways', 'cytokines']),
        'plots/functional/plate/pathways.pdf',
        'plots/structural/cell_density.pdf',
+       'plots/structural/cell2location_proportions.pdf',
        expand('plots/functional/plate/{view_type}_paraviews.pdf', view_type = ['celltype']),
        expand('plots/Misty/{view_type}_misty.pdf', view_type = ['celltype']),
-       expand('plots/Misty/{view_type}_interaction_correlations.pdf', view_type = ['celltype'])
+       expand('plots/Misty/{view_type}_interaction_correlations.pdf', view_type = ['celltype']),
+
 
 
 module preprocess:

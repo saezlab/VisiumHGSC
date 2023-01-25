@@ -19,6 +19,10 @@ functional:
     top_targets: 300
     plot_top: 10
 
+structural:
+  cell2location:
+    cellprop_cutoff: 0.03
+
 
 misty:
     random_seed: 42

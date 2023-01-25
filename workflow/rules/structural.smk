@@ -24,7 +24,7 @@ rule merge_adata:
         '../scripts/structural/merge_adata.py'
 
 #make plots of cell2location output (in proportions)
-rule cell_prop:
+rule cell_umaps_spatial:
     input:
         merged = 'results/structural/{split_type}/merged.h5ad',
         dc_CT = 'results/structural/{split_type}/scores_cell_subtype.csv'
@@ -37,6 +37,19 @@ rule cell_prop:
         "../envs/scanpy.yaml"
     script:
         '../scripts/structural/umaps_CTprop.py'
+
+rule cell_prop_samples:
+    input:
+        merged = 'results/structural/plate/merged.h5ad',
+        ctProp_fp = 'results/Misty/cellprop.csv'
+    output:
+        'plots/structural/cell2location_proportions.pdf'
+    params:
+        config['structural']['cell2location']['cellprop_cutoff']
+    conda:
+        "../envs/scanpy.yaml"
+    script:
+        '../scripts/structural/plot_c2l_proportions.py'
 
 ############################
 #   Use prior atlas to get cell type markers using decoupler
