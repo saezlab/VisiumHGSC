@@ -72,6 +72,7 @@ interactions %>% pull(contrast) %>% unique() %>% walk(function(c){
         meta_df <- metadata %>% filter(Confidence != 'Benign')
         grouping_var <- 'Confidence'
         groups <- c('High confidence', 'Low confidence')
+        tit <- paste(tit, '\nin high vs. low confidence cores')
     }else if (c == 'ShortvsLongHC'){
         meta_df <- metadata %>% filter(Confidence == 'High confidence')
         grouping_var <- 'PFI'
@@ -85,10 +86,11 @@ interactions %>% pull(contrast) %>% unique() %>% walk(function(c){
     }
     
     #combine all three dataframes
-    to.plot <- left_join(contrast.inter %>% select(view, Predictor, Target), correlations %>% filter(sample %in% meta_df$Sample)) %>% 
+    to.plot <- left_join(contrast.inter %>% select(view, Predictor, Target, p.adj), correlations %>% filter(sample %in% meta_df$Sample)) %>% 
         left_join(meta_df, by =c('sample' = 'Sample')) %>%  unite(col = interaction, view, Predictor, sep = ": ") %>% 
-        unite(col = interaction, interaction, Target, sep = " -> ")
+        unite(col = interaction, interaction, Target, sep = " -> ") %>% unite(col = interaction, interaction, p.adj, sep = '\np.adj = ', remove = FALSE)
     to.plot[grouping_var] <- factor(to.plot %>% pull(grouping_var), levels = groups)
+    to.plot$interaction <- factor(to.plot$interaction, levels = to.plot %>% arrange(p.adj) %>% pull(interaction) %>% unique())
     
     if(to.plot %>% nrow() > 0){
         #make boxplot
