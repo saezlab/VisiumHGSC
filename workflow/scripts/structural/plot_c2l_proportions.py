@@ -35,14 +35,28 @@ else:
 adata = sc.read_h5ad(adata_fp)
 
 # %%
+#count number of visium spots per core
+spots_per_core = adata.obs.filter(['Sample', 'orig.ident'], axis = 1).groupby(['Sample']).count()
+spots_per_core.columns = ['n']
+
+# %%
 ctProp = pd.read_csv(ctProp_fp, index_col=0)
 ctProp = ctProp.where(ctProp >= cellprop_cutoff)
 ctProp = pd.merge(ctProp, adata.obs.filter(['Sample'], axis = 1), left_index=True, right_index=True)
 
 # %%
+#compute number of spots w. cell type
 counts = ctProp.groupby(['Sample']).count().reset_index()
 counts.columns = ['Sample'] + ctProp.columns[0:-1].tolist()
+
+#divide number of spots by total in core
+spot_prop = counts.iloc[:,1:].divide(spots_per_core['n'].to_numpy(), axis=0)
+spot_prop['Sample'] = counts['Sample']
+
+#go from wide to long, and merge together
 counts = pd.melt(counts, id_vars='Sample', var_name='celltype', value_name='count')
+spot_prop = pd.melt(spot_prop, id_vars='Sample', var_name='celltype', value_name='prop')
+counts = pd.merge(counts, spot_prop, on = ['Sample', 'celltype'])
 counts = pd.merge(adata.obs.filter(['Sample', 'Confidence', 'PFI', 'patient'], axis=1).drop_duplicates().reset_index(drop = True), counts, on='Sample')
 
 # %%
@@ -65,7 +79,7 @@ with PdfPages(output_fp) as output_pdf:
     axes = axes.flatten()
 
 
-    for df, name, ax in zip([counts1, medians2], ['count', 'median'], axes):
+    for df, name, ax in zip([counts1, medians2], ['prop', 'median'], axes):
 
         sns.boxplot(data = df, x=name, y= 'celltype', hue = 'PFI', fliersize=0, ax=ax, palette='Pastel1')
 
@@ -79,11 +93,12 @@ with PdfPages(output_fp) as output_pdf:
         labels = labels[1:3] #+ sorted(counts['patient'].unique())
         ax.legend(handles, labels)
 
-    axes[0].set_title('Spots with celltype')
+    axes[0].set_title('Proportion of spots in core containing celltype')
     axes[1].set_title('Median proportions in spots')
     axes[0].set_ylabel('')
+    axes[0].set_xlabel('% of spots in core')
     axes[1].set_ylabel('')
-    axes[0].set_xlim(0, np.max(counts['count']) + 10)
+    axes[0].set_xlim(0, np.max(counts['prop']) + 0.1)
     axes[1].set_xlim(0, np.max(medians['median']) + 0.05)
 
     plt.suptitle('Cell proportions from cell2location in high confidence cores')
@@ -99,7 +114,7 @@ with PdfPages(output_fp) as output_pdf:
     axes = axes.flatten()
 
 
-    for df, name, ax in zip([counts, medians], ['count', 'median'], axes):
+    for df, name, ax in zip([counts, medians], ['prop', 'median'], axes):
 
         sns.boxplot(data = df, x=name, y= 'celltype', hue = 'PFI', fliersize=0, ax=ax, palette='Pastel1')
 
@@ -113,11 +128,12 @@ with PdfPages(output_fp) as output_pdf:
         labels = labels[0:3] + sorted(df['Confidence'].unique())
         ax.legend(handles, labels)
 
-    axes[0].set_title('Number of spots with celltype')
+    axes[0].set_title('Proportion of spots in core containing celltype')
     axes[1].set_title('Median proportions in spots')
     axes[0].set_ylabel('')
+    axes[0].set_xlabel('% of spots in core')
     axes[1].set_ylabel('')
-    axes[0].set_xlim(0, np.max(counts['count']) + 10)
+    axes[0].set_xlim(0, np.max(counts['prop']) + 0.1)
     axes[1].set_xlim(0, np.max(medians['median']) + 0.05)
 
     plt.suptitle('Cell proportions from cell2location')
