@@ -4,12 +4,12 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - r-base>=4.1
+  - r-base=4.2.2
   - r-devtools
-  - r-tidyverse
-  - r-purrr
-  - r-distances
-  - r-rcpp
+  - r-tidyverse=1.3.2
+  - r-purrr=0.3.5
+  - r-distances=0.1.8
+  - r-rcpp=1.0.9
   - r-rlist
-  - r-ranger
+  - r-ranger=0.14.1
   - r-factoextra
