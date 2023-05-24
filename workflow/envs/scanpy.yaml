@@ -10,7 +10,8 @@ dependencies:
   - scanpy=1.8.2
   - loompy=3.0.6
   - python-igraph
-  - louvain>=0.6,!=0.6.2
+  - matplotlib<3.7
+  - louvain
   - fa2
   - leidenalg
   - seaborn

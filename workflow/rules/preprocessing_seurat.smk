@@ -7,7 +7,7 @@ checkpoint split_seurat:
     input:
         raw = "data/merged_samples.RDS"
     output:
-        directory("results/split/{split_type}")
+        directory("results/{split_type}/split")
     log:
         "logs/split/{split_type}.log"
     conda:
@@ -17,9 +17,9 @@ checkpoint split_seurat:
 
 rule normalise_seurat:
     input:
-        raw = "results/split/{split_type}/{i}_raw.RDS"
+        raw = "results/{split_type}/split/{i}_raw.RDS"
     output:
-        normalised =  "results/normalised/{split_type}/{i}_norm.RDS"
+        normalised =  "results/{split_type}/normalised/{i}_norm.RDS"
     log:
         "logs/normalised/{split_type}_{i}.log"
     conda:
@@ -29,7 +29,7 @@ rule normalise_seurat:
 
 def aggregate_norm_data(wildcards):
     checkpoint_output = checkpoints.split_seurat.get(**wildcards).output[0]
-    return expand("results/normalised/{split_type}/{i}_norm.RDS", split_type=wildcards.split_type, i=glob_wildcards(os.path.join(checkpoint_output, "{i}_raw.RDS")).i)
+    return expand("results/{split_type}/normalised/{i}_norm.RDS", split_type=wildcards.split_type, i=glob_wildcards(os.path.join(checkpoint_output, "{i}_raw.RDS")).i)
 
 rule integrate_seurat:
     input: 
