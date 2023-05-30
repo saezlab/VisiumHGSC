@@ -26,7 +26,7 @@ if(exists("snakemake")){
   view <- 'celltype'
   
   plot_params <- list(trim = 1, cutoff = 1)
-  sig.cutoff <- snakemake@params$sig_cutoff
+  sig.cutoff <- 0.05
 
   helpers_fp <- 'workflow/scripts/helpers/misty.R'
   result_folders <- paste('results/Misty', view, 'models', sep = .Platform$file.sep) %>% list.files(full.names = TRUE)
@@ -131,15 +131,27 @@ views <- contrast.interactions %>% dplyr::pull(.data$view) %>% unique() %>% sort
 
 views %>% purrr::walk(function(current.view){
   
+  # long.data <- contrast.interactions %>% dplyr::filter(.data$view == current.view) %>%
+  #   dplyr::mutate(sig = -log10(.data$p.adj) * sign(.data$t.value), is.sig = .data$p.adj < sig.cutoff)
+  
   long.data <- contrast.interactions %>% dplyr::filter(.data$view == current.view) %>%
-    dplyr::mutate(sig = -log10(.data$p.adj) * sign(.data$t.value), is.sig = .data$p.adj < 0.05)
+    dplyr::mutate(sig = -log10(.data$p.adj), is.sig = .data$p.adj < sig.cutoff)
+  
+  max.p <- long.data %>% dplyr::pull(sig) %>% max()
   
   inter.plot <- long.data %>% ggplot2::ggplot(ggplot2::aes(x = .data$Predictor, y = .data$Target)) +
-    ggplot2::geom_tile(ggplot2::aes(fill = .data$sig)) + ggplot2::theme_classic() + 
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) + ggplot2::coord_equal() + 
-    ggplot2::scale_fill_gradient2(low = "red", mid = "white", high = "#8DA0CB", midpoint = 0) + ggplot2::labs(fill='-log10(p)') +
-    geom_tile(data = long.data %>% dplyr::filter(.data$is.sig), aes(fill = .data$sig, color = is.sig), size = 0.5) + 
-    scale_color_manual(guide = FALSE, values = c(`TRUE` = "black")) +
+    ggplot2::theme_classic() +
+    ggplot2::geom_tile(data = long.data %>% dplyr::filter(only.in=='High confidence'), ggplot2::aes(fill = .data$sig, color = is.sig), size = 0.5, width = 1, height = 1) + 
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) + ggplot2::coord_equal() +
+    ggplot2::scale_fill_gradient2('-log(p) (only in HC)', low = "white", high = "#8DA0CB", limits = c(0, max.p)) +
+    
+    new_scale("fill") +
+    
+    ggplot2::geom_tile(data = long.data %>% dplyr::filter(only.in=='Low confidence'), ggplot2::aes(fill = .data$sig, color = is.sig), size = 0.5, width = 1, height = 1) +
+    ggplot2::scale_fill_gradient2('-log(p) (only in BG)', low = "white", high = "red", limits = c(0, max.p)) +
+    
+    # geom_tile(data = long.data %>% dplyr::filter(.data$is.sig), aes(fill = .data$sig, color = is.sig), size = 0.5) + 
+    scale_color_manual(guide = FALSE, values = c(`TRUE` = "black", `FALSE` = 'white')) +
     ggplot2::ggtitle(paste('Condition specific interactions in ', current.view, '\nHC vs BG', sep = ''))
   
   print(inter.plot)
@@ -156,14 +168,23 @@ views <- contrast.interactions %>% dplyr::pull(.data$view) %>% unique() %>% sort
 views %>% purrr::walk(function(current.view){
   
   long.data <- contrast.interactions %>% dplyr::filter(.data$view == current.view) %>%
-    dplyr::mutate(sig = -log10(.data$p.adj) * sign(.data$t.value), is.sig = .data$p.adj < 0.05)
+    dplyr::mutate(sig = -log10(.data$p.adj), is.sig = .data$p.adj < sig.cutoff)
   
-  inter.plot <- long.data %>% arrange(-p.adj) %>% ggplot2::ggplot(ggplot2::aes(x = .data$Predictor, y = .data$Target)) +
-    ggplot2::geom_tile(ggplot2::aes(fill = .data$sig)) + ggplot2::theme_classic() + 
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) + ggplot2::coord_equal() + 
-    ggplot2::scale_fill_gradient2(low = "red", mid = "white", high = "#8DA0CB", midpoint = 0) + ggplot2::labs(fill='-log10(p)') +
-    geom_tile(aes(x = .data$Predictor, y = .data$Target, fill = .data$sig, color = is.sig), size = 0.5) + 
-    scale_color_manual(guide = FALSE, values = c(`TRUE` = "black", `FALSE` = "#00000000")) +
+  max.p <- long.data %>% dplyr::pull(sig) %>% max()
+  
+  inter.plot <- long.data %>% ggplot2::ggplot(ggplot2::aes(x = .data$Predictor, y = .data$Target)) +
+    ggplot2::theme_classic() +
+    ggplot2::geom_tile(data = long.data %>% dplyr::filter(only.in=='Short'), ggplot2::aes(fill = .data$sig, color = is.sig), size = 0.5, width = 1, height = 1) +
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) + ggplot2::coord_equal() +
+    ggplot2::scale_fill_gradient2('-log(p) (only in Short)', low = "white", high = "#8DA0CB", limits = c(0, max.p), na.value = "white") +
+
+    new_scale("fill") +
+
+    ggplot2::geom_tile(data = long.data %>% dplyr::filter(only.in=='Long'), ggplot2::aes(fill = .data$sig, color = is.sig), size = 0.5, width = 1, height = 1) +
+    ggplot2::scale_fill_gradient2('-log(p) (only in Long)', low = "white", high = "red", limits = c(0, max.p), na.value = "white") +
+    
+    # geom_tile(data = long.data %>% dplyr::filter(.data$is.sig), aes(fill = .data$sig, color = is.sig), size = 0.5) +
+    scale_color_manual(guide = FALSE, values = c(`TRUE` = "black", `FALSE` = 'white')) +
     ggplot2::ggtitle(paste('Condition specific interactions in ', current.view, '\nShort vs Long (in HC)', sep = ''))
   
   print(inter.plot)
@@ -179,14 +200,24 @@ views <- contrast.interactions %>% dplyr::pull(.data$view) %>% unique() %>% sort
 views %>% purrr::walk(function(current.view){
   
   long.data <- contrast.interactions %>% dplyr::filter(.data$view == current.view) %>%
-    dplyr::mutate(sig = -log10(.data$p.adj) * sign(.data$t.value), is.sig = .data$p.adj < 0.05)
+    dplyr::mutate(sig = -log10(.data$p.adj), is.sig = .data$p.adj < sig.cutoff)
   
-  inter.plot <- long.data %>% arrange(-p.adj) %>% ggplot2::ggplot(ggplot2::aes(x = .data$Predictor, y = .data$Target)) +
-    ggplot2::geom_tile(ggplot2::aes(fill = .data$sig)) + ggplot2::theme_classic() + 
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) + ggplot2::coord_equal() + 
-    ggplot2::scale_fill_gradient2(low = "red", mid = "white", high = "#8DA0CB", midpoint = 0) + ggplot2::labs(fill='-log10(p)') +
-    geom_tile(aes(x = .data$Predictor, y = .data$Target, fill = .data$sig, color = is.sig), size = 0.5) + 
-    scale_color_manual(guide = FALSE, values = c(`TRUE` = "black", `FALSE` = "#00000000")) +
+  max.p <- long.data %>% dplyr::pull(sig) %>% max()
+  
+  inter.plot <- long.data %>% ggplot2::ggplot(ggplot2::aes(x = .data$Predictor, y = .data$Target)) +
+    ggplot2::theme_classic() +
+    ggplot2::geom_tile(data = long.data, ggplot2::aes(fill = .data$sig, color = is.sig)) +
+    ggplot2::geom_tile(data = long.data %>% dplyr::filter(only.in=='Short'), ggplot2::aes(fill = .data$sig, color = is.sig), size = 0.5, width = 1, height = 1) + 
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) + ggplot2::coord_equal() +
+    ggplot2::scale_fill_gradient2('-log(p) (only in Short)', low = "white", high = "#8DA0CB", limits = c(0, max.p)) +
+    
+    new_scale("fill") +
+    
+    ggplot2::geom_tile(data = long.data %>% dplyr::filter(only.in=='Long'), ggplot2::aes(fill = .data$sig, color = is.sig), size = 0.5, width = 1, height = 1) +
+    ggplot2::scale_fill_gradient2('-log(p) (only in Long)', low = "white", high = "red", limits = c(0, max.p)) +
+    
+    # geom_tile(data = long.data %>% dplyr::filter(.data$is.sig), aes(fill = .data$sig, color = is.sig), size = 0.5) + 
+    scale_color_manual(guide = FALSE, values = c(`TRUE` = "black", `FALSE` = 'white')) +
     ggplot2::ggtitle(paste('Condition specific interactions in ', current.view, '\nShort vs Long (in BG)', sep = ''))
   
   print(inter.plot)
