@@ -191,6 +191,7 @@ if(exists("snakemake")){
 }
 
 source(helpers_fp)
+options(dplyr.legacy_locale = TRUE)
 
 # load data ---------------------------------------------------------------
 

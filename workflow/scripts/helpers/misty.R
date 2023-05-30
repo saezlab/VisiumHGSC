@@ -3,6 +3,7 @@ library(dplyr)
 library(ggplot2)
 library(mistyR)
 
+options(dplyr.legacy_locale = TRUE)
 
 reformat_samples <- function(misty.results, view){
   
