@@ -51,6 +51,17 @@ rule cell_prop_samples:
     script:
         '../scripts/structural/plot_c2l_proportions.py'
 
+# make plots of cell2location output for cell types of interest
+rule plot_celltypes:
+    input:
+        merged = 'results/structural/plate/merged.h5ad'
+    output:
+        'plots/structural/plate/COI.pdf'
+    conda:
+        "../envs/scanpy.yaml"
+    script:
+        '../scripts/structural/plot_spatial_proportions.py'
+
 ############################
 #   Use prior atlas to get cell type markers using decoupler
 #   Atlas GEO accession = GSE165897

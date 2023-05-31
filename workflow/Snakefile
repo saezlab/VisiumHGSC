@@ -15,6 +15,7 @@ rule all:
        expand('plots/functional/plate/{view_type}_paraviews.pdf', view_type = ['celltype']),
        expand('plots/Misty/{view_type}_misty.pdf', view_type = ['celltype']),
        expand('plots/Misty/{view_type}_interaction_correlations.pdf', view_type = ['celltype']),
+       'plots/structural/plate/COI.pdf'
 
 
 
