@@ -69,6 +69,8 @@ datas[[1]] <- datas[[1]] %>% filter(Sample == sample)
 
 datas[2:length(datas)] <- lapply(datas[2:length(datas)], function(data){
   data <- data[rownames(datas[[1]]),]
+  colnames(data) <- colnames(data) %>% gsub('[[:punct:]]', '', .)
+  return(data)
 })
 
 if(nrow(datas[[1]]) < 1) stop('There are no spots for sample ', sample, ' in the provided coordinates file:\n', coord_fp)
