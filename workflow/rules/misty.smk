@@ -22,31 +22,6 @@ rule get_celltype_views:
     script:
         "../scripts/misty/make_views.R"
 
-rule get_pathwaysCT_views:
-    input:
-        'results/Misty/coordinates.csv',
-        'results/functional/plate/activities_pathways.csv',
-        'results/Misty/cellprop.csv'
-    output:
-        view = 'results/Misty/pathwaysCT/views/{sample}_view.rds',
-        paraview = 'results/Misty/pathwaysCT/views/{sample}_paraview.csv'
-    conda:
-        "../envs/misty.yaml"
-    script:
-        "../scripts/misty/make_views.R"
-
-rule get_CTpathways_views:
-    input:
-        'results/Misty/coordinates.csv',
-        'results/Misty/cellprop.csv',
-        'results/functional/plate/activities_pathways.csv'
-    output:
-        view = 'results/Misty/CTpathways/views/{sample}_view.rds',
-        paraview = 'results/Misty/CTpathways/views/{sample}_paraview.csv'
-    conda:
-        "../envs/misty.yaml"
-    script:
-        "../scripts/misty/make_views.R"
 
 rule get_combine_paraviews:
     input:
@@ -144,3 +119,16 @@ rule plot_interaction_corr:
         "../envs/misty.yaml"
     script:
         "../scripts/misty/plot_interaction_correlations.R"
+
+############################
+#   Plot spatial locations for two representative samples
+############################
+rule spatial_locations:
+    input:
+        'results/structural/plate/merged.h5ad'
+    output:
+        'plots/spatial_locations.pdf'
+    conda:
+        "../envs/scanpy.yaml"
+    script:
+        "../scripts/misty/plot_spatial_locations.py"
